@@ -1,6 +1,6 @@
 
 /*
- * Socket.cpp
+ * CommonSocket.cpp
  * This file is part of VallauriSoft
  *
  * Copyright (C) 2012 - Comina Francesco
@@ -21,9 +21,9 @@
  * Boston, MA  02110-1301  USA
  */
 
-#ifndef _SOCKET_CPP_
+#ifndef _COMMON_SOCKET_CPP_
 
-#define _SOCKET_CPP_
+#define _COMMON_SOCKET_CPP_
 
 #include "Socket.hpp"
 
@@ -92,6 +92,24 @@ namespace Socket
 
         this->_opened = false;
         this->_binded = false;
+    }
+    
+    void CommonSocket::listen_on_port(Port port)
+    {
+        if (this->_binded) throw SocketException("[listen_on_port] Socket already binded to a port, close the socket before to re-bind");
+
+        if (!this->_opened) this->open();
+
+        Address address(port);
+
+        if (bind(this->_socket_id, (struct sockaddr*)&address, sizeof(struct sockaddr)) == -1)
+        {
+            stringstream error;
+            error << "[listen_on_port] with [port=" << port << "] Cannot bind socket";
+            throw SocketException(error.str());
+        }
+
+        this->_binded = true;
     }
 }
 

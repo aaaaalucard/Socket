@@ -30,6 +30,7 @@
 #include <exception>
 #include <string>
 #include <vector>
+#include <fstream>
 
 #if defined __WIN32 || defined __WIN64
     #define WINDOWS
@@ -126,6 +127,8 @@ namespace Socket
 
         void open(void);
         void close(void);
+        
+        virtual void listen_on_port(Port);
     };
 
     class UDP : public CommonSocket
@@ -133,8 +136,6 @@ namespace Socket
     public:
         UDP(void);
         UDP(const UDP&);
-
-        void listen_on_port(Port);
         
         template <class T> int send(Ip, Port, const T*, size_t);
         template <class T> int send(Address, const T*, size_t);
@@ -152,8 +153,26 @@ namespace Socket
 
     class TCP : public CommonSocket
     {
+    private:
+        Address _address;
     public:
         TCP(void);
+        TCP(const TCP&);
+        
+        Ip ip(void);
+        Port port(void);
+        Address address(void);
+        
+        void listen_on_port(Port, unsigned int);
+        void connect_to(Address);
+        
+        TCP accept_client(void);
+        
+        template <class T> int send(const T*, size_t);
+        template <class T> int receive(T*, size_t);
+        
+        void send_file(string);
+        void receive_file(string);
     };
 }
 

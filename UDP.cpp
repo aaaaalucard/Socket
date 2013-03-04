@@ -40,24 +40,6 @@ namespace Socket
         this->_binded = udp._binded;
     }
 
-    void UDP::listen_on_port(Port port)
-    {
-        if (this->_binded) throw SocketException("[listen_on_port] Socket already binded to a port, close the socket before to re-bind");
-
-        if (!this->_opened) this->open();
-
-        Address address(port);
-
-        if (bind(this->_socket_id, (struct sockaddr*)&address, sizeof(struct sockaddr)) == -1)
-        {
-            stringstream error;
-            error << "[listen_on_port] with [port=" << port << "] Cannot bind socket";
-            throw SocketException(error.str());
-        }
-
-        this->_binded = true;
-    }
-
     template <class T>
     int UDP::send(Ip ip, Port port, const T *data, size_t len)
     {
